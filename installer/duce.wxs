@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Duce's installer: per-user (no admin prompt), into %LOCALAPPDATA%\Programs\Duce,
+     with a Start menu shortcut and a clean uninstall. While uninstalling, Windows first runs
+     "Duce.exe \-\-uninstall-cleanup", which stops any running Duce and removes the autostart
+     entry, then removes the files, the shortcut and the folder itself.
+     The ProductId must match PRODUCT_CODE in src/uninstall.rs. -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- Id="*": every build gets a fresh ProductCode; the fixed UpgradeCode is what ties
+       versions together, letting a newer MSI install straight over an older one.
+       The UpgradeCode must match UPGRADE_CODE in src/uninstall.rs. -->
+  <Product Id="*"
+           UpgradeCode="4EB5AF92-5F18-4E93-B1C6-649EE48A8B6F"
+           Name="Duce" Version="$(var.Version)" Manufacturer="Duce" Language="1033">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perUser"
+             Description="Duce - RGB control for Gigabyte boards and ASUS graphics cards" />
+    <MediaTemplate EmbedCab="yes" />
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer version of Duce is already installed." />
+
+    <Icon Id="DuceIco" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="DuceIco" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="ProgramsDir" Name="Programs">
+          <Directory Id="INSTALLFOLDER" Name="Duce">
+            <Component Id="MainExe" Guid="8725DCDF-CE24-49DE-9641-EE7D3A882448">
+              <RegistryValue Root="HKCU" Key="Software\Duce" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+              <File Id="DuceExe" Source="$(var.ExePath)" Name="Duce.exe" />
+              <!-- Files Duce writes next to itself, so the folder really goes away. -->
+              <RemoveFile Id="RemoveSettings" Name="settings.txt" On="uninstall" />
+              <RemoveFile Id="RemoveLog" Name="Duce.log" On="uninstall" />
+              <RemoveFolder Id="RemoveInstallFolder" On="uninstall" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Component Id="StartMenuShortcut" Guid="D4E0DE35-EEFB-440B-B328-68222994EDA1">
+          <RegistryValue Root="HKCU" Key="Software\Duce" Name="shortcut" Type="integer" Value="1" KeyPath="yes" />
+          <Shortcut Id="DuceLnk" Name="Duce" Description="Duce RGB"
+                    Target="[INSTALLFOLDER]Duce.exe" WorkingDirectory="INSTALLFOLDER" Icon="DuceIco" />
+        </Component>
+      </Directory>
+    </Directory>
+
+    <Feature Id="Main" Level="1">
+      <ComponentRef Id="MainExe" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <!-- Real uninstall: full cleanup (processes, autostart, settings). During an upgrade the old
+         version only stops its processes (its window, and the resident helper versions before
+         1.1 kept), so autostart survives. Nothing stays resident since 1.1. -->
+    <CustomAction Id="CleanupBeforeUninstall" FileKey="DuceExe"
+                  ExeCommand="--uninstall-cleanup" Execute="immediate" Return="ignore" />
+    <CustomAction Id="StopBeforeUpgrade" FileKey="DuceExe"
+                  ExeCommand="--stop" Execute="immediate" Return="ignore" />
+    <InstallExecuteSequence>
+      <Custom Action="CleanupBeforeUninstall" After="InstallInitialize">REMOVE="ALL" AND NOT UPGRADINGPRODUCTCODE</Custom>
+      <Custom Action="StopBeforeUpgrade" After="InstallInitialize">REMOVE="ALL" AND UPGRADINGPRODUCTCODE</Custom>
+    </InstallExecuteSequence>
+  </Product>
+</Wix>

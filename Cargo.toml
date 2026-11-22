@@ -1,0 +1,38 @@
+[package]
+name = "duce"
+version = "1.1.0"
+edition = "2021"
+
+[[bin]]
+name = "Duce"
+path = "src/main.rs"
+
+[dependencies]
+egui = "0.34"
+egui_software_backend = "0.0.3"
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_Devices_HumanInterfaceDevice",
+    "Win32_Devices_DeviceAndDriverInstallation",
+    "Win32_Storage_FileSystem",
+    "Win32_System_LibraryLoader",
+    "Win32_System_Threading",
+    "Win32_System_ApplicationInstallationAndServicing",
+    "Win32_System_Registry",
+    "Win32_System_SystemInformation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Graphics_Gdi",
+] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[patch.crates-io]
+# Vendored with a fix: it redrew immediately when egui asked for a redraw later, using a full CPU core.
+egui_software_backend = { path = "vendor/egui_software_backend" }
+
