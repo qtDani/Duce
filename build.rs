@@ -1,5 +1,5 @@
 // Builds Duce's .ico from src/icon.rs and embeds it in the exe, so Explorer and the taskbar show it.
-// Uses windres from w64devkit (C:\Users\dani\Tools\w64devkit), the same toolkit that provides dlltool.
+// Uses windres and gcc from PATH, or from $W64DEVKIT/bin if that variable is set.
 use std::path::PathBuf;
 
 include!("src/icon.rs");
@@ -61,16 +61,20 @@ fn main() {
     let rc = out.join("duce.rc");
     std::fs::write(&rc, format!("1 ICON \"{}\"\n", ico_path.display().to_string().replace('\\', "/"))).unwrap();
     let obj = out.join("duce_res.o");
-    let tools = PathBuf::from(r"C:\Users\dani\Tools\w64devkit\bin");
-    let status = std::process::Command::new(tools.join("windres.exe"))
-        .arg(format!("--preprocessor={}", tools.join("gcc.exe").display()))
+    println!("cargo:rerun-if-env-changed=W64DEVKIT");
+    let tool = |name: &str| match std::env::var_os("W64DEVKIT") {
+        Some(root) => PathBuf::from(root).join("bin").join(name),
+        None => PathBuf::from(name),
+    };
+    let status = std::process::Command::new(tool("windres.exe"))
+        .arg(format!("--preprocessor={}", tool("gcc.exe").display()))
         .args(["--preprocessor-arg=-E", "--preprocessor-arg=-xc-header", "--preprocessor-arg=-DRC_INVOKED"])
         .arg("-i")
         .arg(&rc)
         .arg("-o")
         .arg(&obj)
         .status()
-        .expect("windres (w64devkit) is needed to embed the icon");
+        .expect("windres is needed to embed the icon: put it on PATH or set W64DEVKIT");
     assert!(status.success(), "windres failed");
     println!("cargo:rustc-link-arg-bins={}", obj.display());
 }

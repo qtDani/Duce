@@ -3,3 +3,4 @@
 /installer/*.wixpdb
 /installer/*.wixobj
 *.log
+/.cargo/config.toml

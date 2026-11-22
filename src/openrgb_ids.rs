@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Credit: the OpenRGB project, https://gitlab.com/CalcProgrammer1/OpenRGB (GPL-2.0-or-later).
 // USB devices OpenRGB can control, as vendor<<16|product, sorted.
 // Generated from OpenRGB's 60-openrgb.rules (master, 1.1.50 git fc3aa07, 2026-11-04).
 // Used only to tell the user whether a detected RGB device is controllable at all.

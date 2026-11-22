@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Credit: the OpenRGB project, https://gitlab.com/CalcProgrammer1/OpenRGB (GPL-2.0-or-later).
 // ASUS NVIDIA cards (ROG Astral, Strix, TUF, ...): ENE lighting chip on the card's I2C bus,
 // reached through NVIDIA's driver (NVAPI). The chip sits at address 0x67 on a port that varies
 // per model, so known ports are scanned; the chip is accepted only if it states an ENE "AUMA"

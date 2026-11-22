@@ -1,3 +1,0 @@
-[target.x86_64-pc-windows-gnu]
-rustflags = ["-Cdlltool=C:/Users/dani/Tools/w64devkit/bin/dlltool.exe"]
-

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Credit: the OpenRGB project, https://gitlab.com/CalcProgrammer1/OpenRGB (GPL-2.0-or-later).
 // Motherboard / fan headers: Gigabyte's ITE RGB controllers over USB HID
 // (feature reports, report ID 0xCC). The IT5711, IT8297 and IT5702 share one protocol;
 // they differ in which lighting zones exist, so the zone list is chosen from the chip's
