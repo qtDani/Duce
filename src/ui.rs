@@ -1060,7 +1060,7 @@ impl Gui {
         if !self.others.is_empty() {
             ui.add_space(6.0);
             ui.label(egui::RichText::new("Other RGB devices on this PC").strong());
-            ui.label(egui::RichText::new("Duce can't control these yet. \"OpenRGB: yes\" means the free OpenRGB app can, and support could be added to Duce on request.").color(self.th.muted).small());
+            ui.label(egui::RichText::new("Duce can't control these yet. Each shows the lighting protocol it uses; \"OpenRGB: yes\" means the free OpenRGB app can drive it, and support could be added to Duce on request.").color(self.th.muted).small());
             for line in &self.others {
                 ui.label(egui::RichText::new(format!("•  {line}")).color(self.th.muted).small());
             }

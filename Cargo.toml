@@ -1,12 +1,17 @@
 [package]
 name = "duce"
-version = "1.1.0"
+version = "1.2.0"
 edition = "2021"
 license = "GPL-2.0-or-later"
 
 [[bin]]
 name = "Duce"
 path = "src/main.rs"
+
+# Terminal-only version: no window and no egui, so it is a fraction of the size.
+[[bin]]
+name = "duce-lite"
+path = "src/lite.rs"
 
 [dependencies]
 egui = "0.34"

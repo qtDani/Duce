@@ -26,6 +26,29 @@ Open `Duce.exe` to pick colors, or use the command line:
 
 Results are written to `Duce.log` next to the exe.
 
+### duce-lite (terminal only)
+
+`duce-lite.exe` is the same controller code without the window (about 0.8 MB instead of 4.5 MB).
+It prints its results and exits when done: nothing stays running, because the controllers
+hold the color themselves. It shares `settings.txt` with `Duce.exe` when it sits
+in the same folder.
+
+| Command | What it does |
+| --- | --- |
+| `duce-lite scan` | List every RGB device on the PC and the lighting protocol it uses |
+| `duce-lite check` | Identify the controllers Duce drives, changing nothing |
+| `duce-lite set RRGGBB [--fans\|--gpu] [--brightness N] [--no-save]` | Set (and save) a color; names like `red` work too |
+| `duce-lite apply` / `off` / `status` | Apply saved colors / lights off / show saved colors |
+
+## Detection
+
+Duce looks for RGB hardware of every kind, read-only, and names the protocol where it can:
+USB devices by their IDs (matched against OpenRGB's list of 1195 devices), graphics cards by
+their card maker's PCI ID, RAM by its part number and the motherboard by its model. RAM
+lighting sits on the SMBus, which Windows only opens to a kernel driver, so RAM is reported
+but never controlled. `tools/gen_openrgb_ids.py` regenerates the device list from a newer
+OpenRGB `60-openrgb.rules`.
+
 ## Building
 
 Needs Rust with the `x86_64-pc-windows-gnu` toolchain, plus `windres`, `gcc` and `dlltool` on
